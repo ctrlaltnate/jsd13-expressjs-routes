@@ -10,3 +10,16 @@ Content-Type: application/json
   "email": "scottlang@example.com",
   "password": "antman123"
 }
+
+### Update an existing User
+PUT http://localhost:3001/api/v1/users/1
+Content-Type: application/json
+
+{
+  "username": "tonystark-updated",
+  "email": "tony.updated@example.com",
+  "password": "newironman123"
+}
+
+### Delete an existing User
+DELETE http://localhost:3001/api/v1/users/3
