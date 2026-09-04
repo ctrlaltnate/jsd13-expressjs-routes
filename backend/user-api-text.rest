@@ -1,0 +1,12 @@
+### Read All Users
+GET http://localhost:3001/api/v1/users
+
+### Create a new User
+POST http://localhost:3001/api/v1/users
+Content-Type: application/json
+
+{
+  "username": "scottlang",
+  "email": "scottlang@example.com",
+  "password": "antman123"
+}

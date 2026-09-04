@@ -1,0 +1,15 @@
+{
+  "name": "jsd13-week11-monorepo",
+  "version": "1.0.0",
+  "description": "monorepo with api + frontend",
+  "license": "ISC",
+  "author": "ctrlaltnate",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev" : "node --env-file=.env --watch src/server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
