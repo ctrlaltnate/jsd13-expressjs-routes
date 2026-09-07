@@ -1,5 +1,7 @@
-import express from "express";
-const router = express.Router();
+import {Router} from "express";
+import {router as v1Routes} from "./v1/index.js";
+import {router as v2Routes} from "./v2/index.js";
+const router = Router();
 
 router.get("/", (req, res) => {
   res.send(`<!doctype html>
@@ -88,4 +90,8 @@ router.get("/", (req, res) => {
     </html>`);
 });
 
+router.use("/v1", v1Routes);
+router.use("/v2", v2Routes);
+
 export default router;
+
