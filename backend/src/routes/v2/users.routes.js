@@ -37,15 +37,29 @@ router.post("/", async(req, res ,next) => {
 router.put("/:id", async (req, res, next) => {
   try {
     
+    const { username, email, password } = req.body;
+
+    if (!username || !email || !password) {
+      return res
+        .status(400)
+        .json({ error: "username, email and password are required!" });
+    }
+
 
     if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid user ID" });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+      username : username,
+      email: email,
+      password: password
+    }, 
+      {
         new: true,
         runValidators: true,
-    }).select("-password");
+    }
+  ).select("-password");
 
     if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });
