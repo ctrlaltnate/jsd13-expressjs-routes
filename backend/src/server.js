@@ -2,6 +2,7 @@ import express from "express";
 import { connectDB } from "./config/db.js";
 import mainRouter from "./routes/index.js";
 import v1Router from "./routes/v1/index.js";
+import v2Router from "./routes/v2/index.js";
 
 const app = express();
 
@@ -21,7 +22,7 @@ async function startServer() {
 app.use(express.json());
 app.use("/", mainRouter);
 app.use("/api/v1", v1Router);
-
+app.use("/api/v2", v2Router);
 // Centralize error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
