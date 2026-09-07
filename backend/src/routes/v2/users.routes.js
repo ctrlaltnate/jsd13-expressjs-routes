@@ -36,9 +36,9 @@ router.post("/", async(req, res ,next) => {
 // Update users
 router.put("/:id", async (req, res, next) => {
   try {
-    const { id } = req.params;
+    
 
-    if(!mongoose.Types.ObjectId.isValid(id)) {
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid user ID" });
     }
 
@@ -61,13 +61,13 @@ router.put("/:id", async (req, res, next) => {
 // Delete users
 router.delete("/:id", async (req, res, next) => {
   try {
-    const { id } = req.params;
+    
 
-    if(!mongoose.Types.ObjectId.isValid(id)) {
+    if(!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(400).json({ error: "Invalid user ID" });
     }
 
-    const deletedUser = await User.findByIdAndDelete(id);
+    const deletedUser = await User.findByIdAndDelete(req.params.id);
 
     if (!deletedUser) {
         return res.status(404).json({ error: "User not found" });
