@@ -1,0 +1,41 @@
+@baseUrl = http://localhost:3001/api/v2
+@userId = a4ded29e-9606-4e41-ae66-269827664842
+### READ all users
+GET {{baseUrl}}/users/pg
+
+### CREATE a new user
+POST {{baseUrl}}/users/pg
+Content-Type: application/json
+
+{
+  "username": "ironman",
+  "email": "tonyiron@example.com",
+  "password": "iron123",
+}
+
+### CREATE a new user 2
+POST {{baseUrl}}/users/pg
+Content-Type: application/json
+
+{
+  "username": "natasharomanoff",
+  "email": "natasha@mail.com",
+  "password": "blackwidow123"
+}
+
+### UPDATE a user
+PUT {{baseUrl}}/users/pg/{{userId}}
+Content-Type: application/json
+
+{
+  "username": "clintbarton",
+  "email": "newmailclint@mail.com",
+  "password": "newpassword123"
+}
+
+### DELETE a user
+DELETE {{baseUrl}}/users/6a9e6abf0ce40fac76d43207
+
+
+
+

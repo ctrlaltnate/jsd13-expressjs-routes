@@ -3,11 +3,13 @@ import { connectDB } from "./config/db.js";
 import mainRouter from "./routes/index.js";
 import v1Router from "./routes/v1/index.js";
 import v2Router from "./routes/v2/index.js";
+import {connectSupabase} from "./config/supabase.js"
 
 const app = express();
 
 async function startServer() {
   try {
+    await connectSupabase();
     await connectDB();
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
