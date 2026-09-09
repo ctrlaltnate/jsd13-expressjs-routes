@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { connectDB } from "./config/db.js";
 import mainRouter from "./routes/index.js";
 import v1Router from "./routes/v1/index.js";
@@ -21,6 +22,7 @@ async function startServer() {
   }
 }
 
+app.use(cors());
 app.use(express.json());
 app.use("/", mainRouter);
 app.use("/api/v1", v1Router);
