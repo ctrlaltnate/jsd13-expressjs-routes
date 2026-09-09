@@ -9,9 +9,9 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "username": "clintbarton",
-  "email": "clint.sbarton1@example.com",
-  "password": "hawkeye123"
+  "username": "testhash",
+  "email": "clint.has@example.com",
+  "password": "hahesf"
 }
 
 ### CREATE a new user 2

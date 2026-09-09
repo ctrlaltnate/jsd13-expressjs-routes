@@ -3,22 +3,16 @@ import mongoose from "mongoose";
 import { User } from "../../models/users.model.js";
 const router = Router();
 
-
-
-
-/*****************BCRYPT FX*********************************************** */
 import bcrypt from "bcrypt";
 
-async function hashPassword(rawpass) {
-  console.log(`raw pass : ${rawpass}`);
-  const saltRounds = 12;
-  const hashedpassword = await bcrypt.hash(rawpass, saltRounds); 
-  console.log(`Hashed Password from Function : ${hashedpassword}`) 
-  return hashedpassword
+const saltRounds = 12;
+
+async function hashPassword(password){
+    console.log(`\n\nRaw Password from Function : ${password}`);
+    const hashp= await bcrypt.hash(password,saltRounds);
+    console.log(`Hashed Password from Function : ${hashp}`);
+    return hashp
 }
-/**************************************************************** */
-
-
 
 
 
@@ -34,6 +28,7 @@ router.get("/", async (req, res, next) => {
 
 // CREATE users
 router.post("/", async (req, res, next) => {
+
   try {
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
