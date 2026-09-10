@@ -97,7 +97,7 @@ router.post("/login", async (req, res, next) => {
       message: "Login Successful",
       user: {
         _id: user._id,
-        username: user.name,
+        username: user.username,
         role: user.role,
         email: user.email,
       },
@@ -128,7 +128,7 @@ router.get("/auth",authUser, async (req, res, next) => {
     const user = await User.findById(userId);
 
     if (!user) {
-      res.status(401).json({ success: false, message: "User Not Found" });
+      return res.status(401).json({ success: false, message: "User Not Found" });
     }
 
     res.status(200).json({ 
@@ -162,23 +162,21 @@ router.put("/:id", async (req, res, next) => {
       return res.status(400).json({ error: "Invalid user ID" });
     }
 
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      {
-        username: username,
-        email: email,
-        password: password,
-      },
-      {
-        new: true,
-        runValidators: true,
-      },
-    ).select("-password");
+    const user = await User.findById(req.params.id);
 
-    if (!updatedUser) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    return res.status(200).json(updatedUser);
+
+    user.username = username;
+    user.email = email;
+    user.password = password;
+    await user.save();
+
+    const safeUser = user.toObject();
+    delete safeUser.password;
+
+    return res.status(200).json(safeUser);
   } catch (err) {
     next(err);
   }
