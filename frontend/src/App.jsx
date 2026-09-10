@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
+
+const API_URL = "http://localhost:3001/api/v2/users";
 
 function App() {
   const [activeTab, setActiveTab] = useState("register");
@@ -7,8 +9,31 @@ function App() {
   const [account, setAccount] = useState(null);
   const [form, setForm] = useState({ username: "", email: "", password: "" });
   const [message, setMessage] = useState("");
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
 
   const isRegister = activeTab === "register";
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const response = await fetch(`${API_URL}/auth`, {
+          credentials: "include",
+        });
+        const data = await response.json();
+
+        if (response.ok) {
+          setAccount(data.data);
+          setIsLoggedIn(true);
+        }
+      } catch {
+        setMessage("Cannot connect to backend");
+      } finally {
+        setIsCheckingSession(false);
+      }
+    };
+
+    checkSession();
+  }, []);
 
   const handleChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value });
@@ -18,11 +43,9 @@ function App() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const endpoint = isRegister
-      ? "http://localhost:3001/api/v2/users"
-      : "http://localhost:3001/api/v2/users/login";
+    const endpoint = isRegister ? API_URL : `${API_URL}/login`;
     const body = isRegister
-      ? { username: form.username, email: form.email, password: form.password }
+      ? { username: form.username, email: form.email, password: form.password, role: "user" }
       : { email: form.email, password: form.password };
 
     try {
@@ -30,6 +53,7 @@ function App() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
+        credentials: "include",
       });
       const data = await response.json();
 
@@ -59,11 +83,20 @@ function App() {
     setMessage("");
   };
 
-  const logOut = () => {
+  const logOut = async () => {
+    await fetch(`${API_URL}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
     setIsLoggedIn(false);
+    setAccount(null);
     setActiveTab("login");
     setForm({ username: "", email: "", password: "" });
   };
+
+  if (isCheckingSession) {
+    return <main className="app-shell session-loading">Checking session...</main>;
+  }
 
   return (
     <main className="app-shell">
@@ -71,7 +104,10 @@ function App() {
         <section className="welcome-panel">
           <span className="eyebrow">You are signed in</span>
           <h1>Good to see you, {account.username}.</h1>
-          <p>Your local account is ready. This is the place where your app content will live.</p>
+          <div className="account-details">
+            <p><strong>Email</strong>{account.email}</p>
+            <p><strong>Role</strong>{account.role}</p>
+          </div>
           <div className="welcome-actions">
             <button className="button button-primary" type="button" onClick={logOut}>Log out</button>
             <button className="button button-quiet" type="button" onClick={showRegister}>Create a new account</button>

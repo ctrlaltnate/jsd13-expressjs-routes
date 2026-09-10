@@ -96,9 +96,13 @@ input::placeholder { color: #999999; }
 }
 
 .welcome-panel h1 { margin: 13px 0 14px; font-size: 34px; line-height: 1.1; }
+.account-details { display: grid; gap: 10px; margin-top: 24px; padding-top: 18px; border-top: 1px solid #dddddd; }
+.account-details p { display: flex; justify-content: space-between; gap: 20px; margin: 0; color: #666666; font-size: 14px; }
+.account-details strong { color: #111111; }
 .welcome-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
 .button-quiet { color: #111111; background: #ffffff; border: 1px solid #111111; }
 .button-quiet:hover { color: #ffffff; background: #f26a21; border-color: #f26a21; }
+.session-loading { display: grid; place-items: center; color: #666666; font-size: 14px; }
 
 .footer {
   width: 100%;
