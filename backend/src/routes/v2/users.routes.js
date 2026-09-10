@@ -2,9 +2,9 @@ import { Router } from "express";
 import mongoose from "mongoose";
 import { User } from "../../models/users.model.js";
 const router = Router();
+import jwt from "jsonwebtoken";
 
-
-
+const isProd = process.env.NODE_ENV === "production";
 
 /*****************BCRYPT FX*********************************************** */
 import bcrypt from "bcrypt";
@@ -12,13 +12,11 @@ import bcrypt from "bcrypt";
 async function hashPassword(rawpass) {
   console.log(`raw pass : ${rawpass}`);
   const saltRounds = 12;
-  const hashedpassword = await bcrypt.hash(rawpass, saltRounds); 
-  console.log(`Hashed Password from Function : ${hashedpassword}`) 
-  return hashedpassword
+  const hashedpassword = await bcrypt.hash(rawpass, saltRounds);
+  console.log(`Hashed Password from Function : ${hashedpassword}`);
+  return hashedpassword;
 }
 /**************************************************************** */
-
-
 
 // READ users
 router.get("/", async (req, res, next) => {
@@ -33,16 +31,16 @@ router.get("/", async (req, res, next) => {
 // CREATE users
 router.post("/", async (req, res, next) => {
   try {
-    const { username, email, password,role} = req.body;
-    if (!username || !email || !password ||!role) {
+    const { username, email, password, role } = req.body;
+    if (!username || !email || !password || !role) {
       return res.status(400).json({
         error:
           "Missing required fields, Please provide username, email, and password",
       });
     }
 
-    const newUser = await User.create({ username,role, email, password });
-    
+    const newUser = await User.create({ username, role, email, password });
+
     const safeUser = newUser.toObject();
     delete safeUser.password;
 
@@ -51,7 +49,6 @@ router.post("/", async (req, res, next) => {
     next(err);
   }
 });
-
 
 //***********  LOGIN   ******************************************/
 router.post("/login", async (req, res, next) => {
@@ -72,24 +69,37 @@ router.post("/login", async (req, res, next) => {
       });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(
-      password,
-      user.password,
-    );
+    const isMatched = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordCorrect) {
+    if (!isMatched) {
       return res.status(401).json({
-        error: "Invalid email or password",
+        success: false,
+        message: "Invalid password",
       });
     }
 
-    const safeUser = user.toObject();
-    delete safeUser.password;
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? "none" : "lax",
+      path: "/",
+      maxAge: 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
-      message: "Login successful",
-      user: safeUser,
-    });
+      success:true,
+      message: "Login Successful",
+      user:{
+        _id: user._id,
+        username:user.name,
+        role:user.role,
+        email:user.email,
+      }
+    })
   } catch (err) {
     next(err);
   }
