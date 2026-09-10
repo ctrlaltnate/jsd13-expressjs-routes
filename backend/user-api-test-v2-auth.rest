@@ -1,0 +1,84 @@
+@baseUrl = http://localhost:3001/api/v2
+@userId = 6a9e62cf461291208ea6fad4
+
+### READ all users
+GET {{baseUrl}}/users 
+
+### CREATE a new user
+POST {{baseUrl}}/users 
+Content-Type: application/json
+
+{
+  "username": "testhash",
+  "email": "clint.has@example.com",
+  "password": "hahesf"
+}
+
+### CREATE a new user 2
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "natasharomanoff",
+  "email": "natasha@mail.com",
+  "password": "blackwidow123"
+}
+
+### UPDATE a user
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+  "username": "clintbarton",
+  "email": "newmailclint@mail.com",
+  "password": "newpassword123"
+}
+
+### DELETE a user
+DELETE {{baseUrl}}/users/6a9e6abf0ce40fac76d43207
+
+
+
+
+@baseUrl = http://localhost:3001/api/v2
+@userId = 6a9e62cf461291208ea6fad4
+
+### READ all users
+GET {{baseUrl}}/users 
+
+### CREATE a new user
+POST {{baseUrl}}/users 
+Content-Type: application/json
+
+{
+  "username": "clintbarton",
+  "email": "clint.sbarton1@example.com",
+  "password": "hawkeye123"
+}
+
+### CREATE a new user 2
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "natasharomanoff",
+  "email": "natasha@mail.com",
+  "password": "blackwidow123"
+}
+
+### UPDATE a user
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: application/json
+
+{
+  "username": "clintbarton",
+  "email": "newmailclint@mail.com",
+  "password": "newpassword123"
+}
+
+### DELETE a user
+DELETE {{baseUrl}}/users/6a9e6abf0ce40fac76d43207
+
+
+
+

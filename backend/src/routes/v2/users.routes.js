@@ -33,18 +33,19 @@ router.get("/", async (req, res, next) => {
 // CREATE users
 router.post("/", async (req, res, next) => {
   try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+    const { username, email, password,role} = req.body;
+    if (!username || !email || !password ||!role) {
       return res.status(400).json({
         error:
           "Missing required fields, Please provide username, email, and password",
       });
     }
-    const hpass = await hashPassword(password);
-    const newUser = await User.create({ username, email, password:hpass });
+
+    const newUser = await User.create({ username,role, email, password });
     
     const safeUser = newUser.toObject();
     delete safeUser.password;
+
     return res.status(201).json(safeUser);
   } catch (err) {
     next(err);
