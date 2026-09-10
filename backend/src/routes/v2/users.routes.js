@@ -3,11 +3,13 @@ import mongoose from "mongoose";
 import { User } from "../../models/users.model.js";
 const router = Router();
 import jwt from "jsonwebtoken";
+import { authUser } from "../../middlewares/authUser.js";
 
 const isProd = process.env.NODE_ENV === "production";
 
 /*****************BCRYPT FX*********************************************** */
 import bcrypt from "bcrypt";
+
 
 async function hashPassword(rawpass) {
   console.log(`raw pass : ${rawpass}`);
@@ -50,7 +52,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-//***********  LOGIN   ******************************************/
+//***********  LOGIN & LOGOUT &Check Token ******************************************/
 router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -81,7 +83,7 @@ router.post("/login", async (req, res, next) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    
+
     res.cookie("accessToken", token, {
       httpOnly: true,
       secure: isProd,
@@ -91,19 +93,59 @@ router.post("/login", async (req, res, next) => {
     });
 
     return res.status(200).json({
-      success:true,
+      success: true,
       message: "Login Successful",
-      user:{
+      user: {
         _id: user._id,
-        username:user.name,
-        role:user.role,
-        email:user.email,
-      }
-    })
+        username: user.name,
+        role: user.role,
+        email: user.email,
+      },
+    });
   } catch (err) {
     next(err);
   }
 });
+
+router.post("/logout", async (req, res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    path: "/",
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Logout Successful",
+  });
+});
+
+// Check User Token
+router.get("/auth",authUser, async (req, res, next) => {
+  try {
+    const userId = req.user.user._id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(401).json({ success: false, message: "User Not Found" });
+    }
+
+    res.status(200).json({ 
+      success: true, 
+      data: {
+        _id: user._id,
+        username: user.username,
+        email:user.email,
+        role: user.role
+      } 
+    }
+  );
+  } catch (err) {
+    next(err);
+  }
+});
+
 //***********************************************************/
 // Update users
 router.put("/:id", async (req, res, next) => {

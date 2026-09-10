@@ -5,9 +5,11 @@ import mainRouter from "./routes/index.js";
 import v1Router from "./routes/v1/index.js";
 import v2Router from "./routes/v2/index.js";
 import {connectSupabase} from "./config/supabase.js"
+import cookieParser from "cookie-parser";
+
 
 const app = express();
-
+app.use(cookieParser());
 async function startServer() {
   try {
     await connectSupabase();

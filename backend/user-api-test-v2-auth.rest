@@ -3,7 +3,7 @@
 @email = nickmail@example.com
 @password = nockpass
 
-##
+### Login
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
@@ -13,6 +13,11 @@ Content-Type: application/json
   "password":"{{password}}"
 }
 
+### Logout
+POST {{baseUrl}}/users/logout
+
+###Check user's token
+GET {{baseUrl}}/users/auth
 
 
 ### READ all users
