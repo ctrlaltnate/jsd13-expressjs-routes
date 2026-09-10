@@ -20,8 +20,6 @@ async function hashPassword(rawpass) {
 
 
 
-
-
 // READ users
 router.get("/", async (req, res, next) => {
   try {
@@ -45,12 +43,57 @@ router.post("/", async (req, res, next) => {
     const hpass = await hashPassword(password);
     const newUser = await User.create({ username, email, password:hpass });
     
-    return res.status(201).json(newUser);
+    const safeUser = newUser.toObject();
+    delete safeUser.password;
+    return res.status(201).json(safeUser);
   } catch (err) {
     next(err);
   }
 });
 
+
+//***********  LOGIN   ******************************************/
+router.post("/login", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        error: "Email and password are required",
+      });
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      user.password,
+    );
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        error: "Invalid email or password",
+      });
+    }
+
+    const safeUser = user.toObject();
+    delete safeUser.password;
+
+    return res.status(200).json({
+      message: "Login successful",
+      user: safeUser,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+//***********************************************************/
 // Update users
 router.put("/:id", async (req, res, next) => {
   try {
